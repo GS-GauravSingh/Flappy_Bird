@@ -185,24 +185,27 @@ def check_collision(p_list):
             with open("hiscore.txt", "w") as f:
                     f.write(str(highscore))
             text_screen(f"Score: {str(score)}", black, 110, 20)
-            text_screen("Game Over!!", black, 70, 100)
-            text_screen("Press Enter to Continue", black, 6, 140)
+            text_screen(f"HiScore: {str(highscore)}", black, 100, 475)
+            text_screen("Game Over!!", black, 70, 170)
+            text_screen("Press Enter to Continue", black, 6, 210)
             return False
     
     if Bird_rect.top < -5:
         with open("hiscore.txt", "w") as f:
             f.write(str(highscore))
         text_screen(f"Score: {str(score)}", black, 110, 20)
-        text_screen("Game Over!!", black, 70, 100)
-        text_screen("Press Enter to Continue", black, 6, 140)
+        text_screen(f"HiScore: {str(highscore)}", black, 100, 475)
+        text_screen("Game Over!!", black, 70, 170)
+        text_screen("Press Enter to Continue", black, 6, 210)
         return False
     
     if Bird_rect.bottom > 500:
         with open("hiscore.txt", "w") as f:
              f.write(str(highscore))
         text_screen(f"Score: {str(score)}", black, 110, 20)
-        text_screen("Game Over!!", black, 70, 100)
-        text_screen("Press Enter to Continue", black, 6, 140)
+        text_screen(f"HiScore: {str(highscore)}", black, 100, 475)
+        text_screen("Game Over!!", black, 70, 170)
+        text_screen("Press Enter to Continue", black, 6, 210)
         return False
     return True
 
