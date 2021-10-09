@@ -1,7 +1,7 @@
 from os import pipe
 import pygame, pygame.display, pygame.image, pygame.transform, pygame.event, pygame.font, pygame.time, pygame.mixer
 from pygame.constants import K_RETURN, K_SPACE
-import sys, random
+import sys, random, os
 pygame.init()
 pygame.mixer.init()
 
@@ -27,6 +27,17 @@ game_on = True
 game_start = False
 score = 0
 can_score = True
+
+# Creating HiScore File if not exists
+if not (os.path.exists("hiscore.txt")):
+    with open("hiscore.txt", "w") as f:
+        f.write("0")
+    
+with open("hiscore.txt", "r") as f:
+        highscore = f.read()
+    
+
+
 
 # Colors
 black = (0, 0, 0)
@@ -66,6 +77,9 @@ Game_Sounds["point"] = pygame.mixer.Sound("audio/point.wav")
 
 """ Game Functions """
 def welcome_screen():
+    with open("hiscore.txt", "r") as f:
+        highscore = f.read()
+   
     base_x = 0
     index_bird = 0
     bird_move = -2
@@ -76,6 +90,8 @@ def welcome_screen():
 
     while True:
         GameWindow.blit(Game_Imges["background"], (0, 0))
+        text_screen(f"Score:{str(score)}", black, 5, 5)
+        text_screen(f"HiScore:{str(highscore)}", black, 180, 5)
         GameWindow.blit(Game_Imges["welcome"], (-20, 30))
         # Bird
         select_bird = Game_Imges["welcome_screen_bird"][index_bird]
@@ -161,31 +177,46 @@ def pipes_velocity(p_list):
 
 
 def check_collision(p_list):
-    global Bird_rect
+    global Bird_rect, score
+    
     for pipes in p_list:
+
         if pipes.colliderect(Bird_rect):
+            with open("hiscore.txt", "w") as f:
+                    f.write(str(highscore))
+            text_screen(f"Score: {str(score)}", black, 110, 20)
             text_screen("Game Over!!", black, 70, 100)
             text_screen("Press Enter to Continue", black, 6, 140)
             return False
     
     if Bird_rect.top < -5:
+        with open("hiscore.txt", "w") as f:
+            f.write(str(highscore))
+        text_screen(f"Score: {str(score)}", black, 110, 20)
         text_screen("Game Over!!", black, 70, 100)
         text_screen("Press Enter to Continue", black, 6, 140)
         return False
     
     if Bird_rect.bottom > 500:
+        with open("hiscore.txt", "w") as f:
+             f.write(str(highscore))
+        text_screen(f"Score: {str(score)}", black, 110, 20)
         text_screen("Game Over!!", black, 70, 100)
         text_screen("Press Enter to Continue", black, 6, 140)
         return False
     return True
 
+
 def point_check():
-    global new_pipe_list, score, can_score
+    global new_pipe_list, score, can_score, highscore 
     if new_pipe_list:
         for pipe in new_pipe_list:
             if  pipe.centerx == 70 and can_score:
                 Game_Sounds["point"].play()
                 score += 1
+                if score >= int(highscore):
+                    highscore = score
+                
                 can_score = False
             if pipe.centerx < 0:
                 can_score = True 
@@ -204,6 +235,7 @@ Spawn_Pipe = pygame.USEREVENT + 1
 pygame.time.set_timer(Spawn_Pipe, 1200)
 
 welcome_screen()
+
 while True:
     # welcome_screen()
     
