@@ -32,6 +32,7 @@ black = (0, 0, 0)
 """ Loading and Adding game images to dictionary """
 Game_Imges["background"] = pygame.image.load("images/background.png") # Background
 Game_Imges["base"] = pygame.image.load("images/base1.png") # Base
+Game_Imges["welcome"] = pygame.image.load("images/welcome.png") # Welcome message
 
 # Small size bird images for main game animation
 Game_Imges["main_game_bird"] = [
@@ -62,29 +63,55 @@ Game_Sounds["point"] = pygame.mixer.Sound("audio/point.wav")
 """ ------------------------------------------------------------------ """
 
 """ Game Functions """
-# def welcome_screen():
-#     global base_x
-#     GameWindow.blit(Game_Imges["background"], (0, 0))
-#     moving_base()
-#     # GameWindow.blit(Game_Imges["base"], (base_x, 0))
-#     # GameWindow.blit(Game_Imges["base"], (base_x + 333, 500))
-#     # if base_x > -333:
-#     #     base_x -= 3
-#     # else:
-#     #     base_x = 0
-#     while True:
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#                 sys.exit()
-#             if event.type == pygame.KEYDOWN:
-#                 if event.key == K_SPACE:
-#                     return
+def welcome_screen():
+    base_x = 0
+    index_bird = 0
+    bird_move = -2
+
+    
+    flap_bird = pygame.USEREVENT
+    pygame.time.set_timer(flap_bird, 200)
+
+    while True:
+        GameWindow.blit(Game_Imges["background"], (0, 0))
+        GameWindow.blit(Game_Imges["welcome"], (-20, 30))
+        # Bird
+        select_bird = Game_Imges["welcome_screen_bird"][index_bird]
+        rect_bird = select_bird.get_rect(center = (bird_move, 300))
+        bird_move += 1
+        if bird_move >= 150:
+            bird_move = 150
+        
+        # Base
+        base_x -= 1
+        GameWindow.blit(Game_Imges["base"], (base_x, 500))
+        GameWindow.blit(Game_Imges["base"], (base_x + 333, 500))
+        if base_x > -333:
+            base_x -= 3
+        else:
+            base_x = 0
+        
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_SPACE:
+                    return
             
-#         pygame.display.update()
-#         clock.tick(FPS)
+            if event.type == flap_bird:
+                if index_bird <= 1:
+                    index_bird += 1
+                else:
+                    index_bird = 0
+        GameWindow.blit(select_bird, rect_bird)
+            
+        pygame.display.update()
+        clock.tick(FPS)
 
         
+
 
 
 
@@ -165,7 +192,7 @@ pygame.time.set_timer(Bird_flap, 200)
 Spawn_Pipe = pygame.USEREVENT + 1
 pygame.time.set_timer(Spawn_Pipe, 1200)
 
-
+welcome_screen()
 while True:
     # welcome_screen()
     
