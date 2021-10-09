@@ -62,27 +62,27 @@ Game_Sounds["point"] = pygame.mixer.Sound("audio/point.wav")
 """ ------------------------------------------------------------------ """
 
 """ Game Functions """
-def welcome_screen():
-    global base_x
-    GameWindow.blit(Game_Imges["background"], (0, 0))
-    moving_base()
-    # GameWindow.blit(Game_Imges["base"], (base_x, 0))
-    # GameWindow.blit(Game_Imges["base"], (base_x + 333, 500))
-    # if base_x > -333:
-    #     base_x -= 3
-    # else:
-    #     base_x = 0
-    # while True:
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             pygame.quit()
-    #             sys.exit()
-    #         if event.type == pygame.KEYDOWN:
-    #             if event.key == K_SPACE:
-    #                 return
+# def welcome_screen():
+#     global base_x
+#     GameWindow.blit(Game_Imges["background"], (0, 0))
+#     moving_base()
+#     # GameWindow.blit(Game_Imges["base"], (base_x, 0))
+#     # GameWindow.blit(Game_Imges["base"], (base_x + 333, 500))
+#     # if base_x > -333:
+#     #     base_x -= 3
+#     # else:
+#     #     base_x = 0
+#     while True:
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 pygame.quit()
+#                 sys.exit()
+#             if event.type == pygame.KEYDOWN:
+#                 if event.key == K_SPACE:
+#                     return
             
-    #     pygame.display.update()
-    #     clock.tick(FPS)
+#         pygame.display.update()
+#         clock.tick(FPS)
 
         
 
@@ -144,9 +144,13 @@ def check_collision(p_list):
             return False
     
     if Bird_rect.top < -5:
+        text_screen("Game Over!!", black, 70, 100)
+        text_screen("Press Enter to Continue", black, 6, 140)
         return False
     
     if Bird_rect.bottom > 500:
+        text_screen("Game Over!!", black, 70, 100)
+        text_screen("Press Enter to Continue", black, 6, 140)
         return False
     return True
 
