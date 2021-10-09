@@ -1,6 +1,6 @@
 from os import pipe
 import pygame, pygame.display, pygame.image, pygame.transform, pygame.event, pygame.font, pygame.time, pygame.mixer
-from pygame.constants import K_SPACE
+from pygame.constants import K_RETURN, K_SPACE
 import sys, random
 pygame.init()
 pygame.mixer.init()
@@ -16,7 +16,7 @@ FPS = 30
 Game_Imges = {} # Dictionary to store all images as key value pairs
 Game_Sounds = {} # Dictionary to store all sounds as key value pairs
 clock = pygame.time.Clock()
-font = pygame.font.SysFont("footlight", 40)
+font = pygame.font.SysFont("footlight", 32)
 base_x = 0
 bird_index = 0
 gravity = 1
@@ -24,6 +24,10 @@ bird_movement = 0
 pipe_list = []
 pipe_height = [400, 320, 500, 250]
 game_on = True
+game_start = False
+
+# Colors
+black = (0, 0, 0)
 
 """ Loading and Adding game images to dictionary """
 Game_Imges["background"] = pygame.image.load("images/background.png") # Background
@@ -58,6 +62,37 @@ Game_Sounds["point"] = pygame.mixer.Sound("audio/point.wav")
 """ ------------------------------------------------------------------ """
 
 """ Game Functions """
+def welcome_screen():
+    global base_x
+    GameWindow.blit(Game_Imges["background"], (0, 0))
+    moving_base()
+    # GameWindow.blit(Game_Imges["base"], (base_x, 0))
+    # GameWindow.blit(Game_Imges["base"], (base_x + 333, 500))
+    # if base_x > -333:
+    #     base_x -= 3
+    # else:
+    #     base_x = 0
+    # while True:
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             pygame.quit()
+    #             sys.exit()
+    #         if event.type == pygame.KEYDOWN:
+    #             if event.key == K_SPACE:
+    #                 return
+            
+    #     pygame.display.update()
+    #     clock.tick(FPS)
+
+        
+
+
+
+def text_screen(text, color, x, y):
+    screen_text = font.render(text, True, color)
+    GameWindow.blit(screen_text, (x, y))
+
+
 def moving_base():
     global base_x
     GameWindow.blit(Game_Imges["base"], (base_x, 500))
@@ -104,6 +139,8 @@ def check_collision(p_list):
     global Bird_rect
     for pipes in p_list:
         if pipes.colliderect(Bird_rect):
+            text_screen("Game Over!!", black, 70, 100)
+            text_screen("Press Enter to Continue", black, 6, 140)
             return False
     
     if Bird_rect.top < -5:
@@ -126,17 +163,25 @@ pygame.time.set_timer(Spawn_Pipe, 1200)
 
 
 while True:
+    # welcome_screen()
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
         
         if event.type == pygame.KEYDOWN:
-            if event.key == K_SPACE:
+            if event.key == K_SPACE and game_on:
                 bird_movement = 0
                 bird_movement -= 15
                 Game_Sounds["wing"].play()
-        
+
+            if event.key == K_RETURN and game_on == False:
+                game_on = True
+                bird_movement = 0
+                new_pipe_list.clear()
+                Bird_rect.center= (80, 200)
+
         if event.type == Bird_flap:
             if bird_index <= 1:
                 bird_index += 1
@@ -145,6 +190,8 @@ while True:
 
         if event.type == Spawn_Pipe:
             pipe_list.extend(creating_pipes())
+        
+
             
             
 
