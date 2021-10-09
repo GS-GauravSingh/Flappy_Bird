@@ -25,6 +25,8 @@ pipe_list = []
 pipe_height = [400, 320, 500, 250]
 game_on = True
 game_start = False
+score = 0
+can_score = True
 
 # Colors
 black = (0, 0, 0)
@@ -110,10 +112,6 @@ def welcome_screen():
         pygame.display.update()
         clock.tick(FPS)
 
-        
-
-
-
 
 def text_screen(text, color, x, y):
     screen_text = font.render(text, True, color)
@@ -156,7 +154,7 @@ def blitting_pipes(p_list):
 
 
 def pipes_velocity(p_list):
-    """ This function returns a new list in which pipes are moving in -x directiuon """
+    """ This function returns a new list in which pipes are moving in -x direction """
     for pipes in p_list:
         pipes.centerx -= 4
     return p_list
@@ -180,6 +178,19 @@ def check_collision(p_list):
         text_screen("Press Enter to Continue", black, 6, 140)
         return False
     return True
+
+def point_check():
+    global new_pipe_list, score, can_score
+    if new_pipe_list:
+        for pipe in new_pipe_list:
+            if  pipe.centerx == 70 and can_score:
+                Game_Sounds["point"].play()
+                score += 1
+                can_score = False
+            if pipe.centerx < 0:
+                can_score = True 
+
+    text_screen(f"{str(score)}", black, 150, 50)
 
 
 """ Rects """
@@ -221,10 +232,6 @@ while True:
 
         if event.type == Spawn_Pipe:
             pipe_list.extend(creating_pipes())
-        
-
-            
-            
 
 
     GameWindow.blit(Game_Imges["background"], (0, 0))
@@ -239,6 +246,8 @@ while True:
         #Pipes
         new_pipe_list = pipes_velocity(pipe_list)
         blitting_pipes(new_pipe_list)
+
+        point_check()
 
     # Base
     moving_base()
