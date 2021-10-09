@@ -77,6 +77,7 @@ Game_Sounds["point"] = pygame.mixer.Sound("audio/point.wav")
 
 """ Game Functions """
 def welcome_screen():
+    global bird_movement, pipe_list, Bird_rect, score
     with open("hiscore.txt", "r") as f:
         highscore = f.read()
    
@@ -116,7 +117,11 @@ def welcome_screen():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == K_SPACE:
-                    return
+                    score = 0
+                    bird_movement = 0
+                    pipe_list.clear()
+                    Bird_rect.center= (80, 200)
+                return
             
             if event.type == flap_bird:
                 if index_bird <= 1:
@@ -182,46 +187,50 @@ def check_collision(p_list):
     for pipes in p_list:
 
         if pipes.colliderect(Bird_rect):
+            Game_Sounds["hit"].play()
             with open("hiscore.txt", "w") as f:
                     f.write(str(highscore))
             text_screen(f"Score: {str(score)}", black, 110, 20)
             text_screen(f"HiScore: {str(highscore)}", black, 100, 475)
             text_screen("Game Over!!", black, 70, 170)
             text_screen("Press Enter to Continue", black, 6, 210)
-            return False
+            welcome_screen()
     
     if Bird_rect.top < -5:
+        Game_Sounds["hit"].play()
         with open("hiscore.txt", "w") as f:
             f.write(str(highscore))
         text_screen(f"Score: {str(score)}", black, 110, 20)
         text_screen(f"HiScore: {str(highscore)}", black, 100, 475)
         text_screen("Game Over!!", black, 70, 170)
         text_screen("Press Enter to Continue", black, 6, 210)
-        return False
+        welcome_screen()
+        
     
     if Bird_rect.bottom > 500:
+        Game_Sounds["hit"].play()
         with open("hiscore.txt", "w") as f:
              f.write(str(highscore))
         text_screen(f"Score: {str(score)}", black, 110, 20)
         text_screen(f"HiScore: {str(highscore)}", black, 100, 475)
         text_screen("Game Over!!", black, 70, 170)
         text_screen("Press Enter to Continue", black, 6, 210)
-        return False
-    return True
+        
+        welcome_screen()
 
 
 def point_check():
     global new_pipe_list, score, can_score, highscore 
-    if new_pipe_list:
-        for pipe in new_pipe_list:
-            if  pipe.centerx == 70 and can_score:
+    if pipe_list:
+        for pipe in pipe_list:
+            if pipe.centerx ==70 and can_score:
                 Game_Sounds["point"].play()
                 score += 1
                 if score >= int(highscore):
                     highscore = score
                 
                 can_score = False
-            if pipe.centerx < 0:
+            if pipe.centerx < 10:
                 can_score = True 
 
     text_screen(f"{str(score)}", black, 150, 50)
@@ -248,16 +257,16 @@ while True:
             sys.exit()
         
         if event.type == pygame.KEYDOWN:
-            if event.key == K_SPACE and game_on:
+            if event.key == K_SPACE:
                 bird_movement = 0
                 bird_movement -= 15
                 Game_Sounds["wing"].play()
 
-            if event.key == K_RETURN and game_on == False:
-                game_on = True
-                bird_movement = 0
-                new_pipe_list.clear()
-                Bird_rect.center= (80, 200)
+            # if event.key == K_RETURN and game_on == False:
+            #     game_on = True
+            #     bird_movement = 0
+            #     new_pipe_list.clear()
+            #     Bird_rect.center= (80, 200)
 
         if event.type == Bird_flap:
             if bird_index <= 1:
@@ -271,24 +280,25 @@ while True:
 
     GameWindow.blit(Game_Imges["background"], (0, 0))
 
-    if game_on:
-        # Bird
-        bird_movement += gravity
-        Bird_rect.centery += bird_movement
-        bird_select, Bird_rect = bird_animation()
-        GameWindow.blit(bird_select, Bird_rect)
+    
+    # Bird
+    bird_movement += gravity
+    Bird_rect.centery += bird_movement
+    bird_select, Bird_rect = bird_animation()
+    GameWindow.blit(bird_select, Bird_rect)
 
-        #Pipes
-        new_pipe_list = pipes_velocity(pipe_list)
-        blitting_pipes(new_pipe_list)
+    #Pipes
+    pipe_list = pipes_velocity(pipe_list)
+    blitting_pipes(pipe_list)
 
-        point_check()
+    point_check()
 
     # Base
     moving_base()
 
     #collision
-    game_on = check_collision(new_pipe_list)
+    check_collision(pipe_list)
+
      
     
 
