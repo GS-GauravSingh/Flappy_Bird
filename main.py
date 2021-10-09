@@ -92,7 +92,7 @@ def welcome_screen():
     while True:
         GameWindow.blit(Game_Imges["background"], (0, 0))
         text_screen(f"Score:{str(score)}", black, 5, 5)
-        text_screen(f"HiScore:{str(highscore)}", black, 180, 5)
+        text_screen(f"HiScore:{str(highscore)}", black, 170, 5)
         GameWindow.blit(Game_Imges["welcome"], (-20, 30))
         # Bird
         select_bird = Game_Imges["welcome_screen_bird"][index_bird]
@@ -230,7 +230,7 @@ def point_check():
                     highscore = score
                 
                 can_score = False
-            if pipe.centerx < 10:
+            if pipe.centerx < 40:
                 can_score = True 
 
     text_screen(f"{str(score)}", black, 150, 50)
