@@ -23,6 +23,7 @@ gravity = 1
 bird_movement = 0
 pipe_list = []
 pipe_height = [400, 320, 500, 250]
+game_on = True
 
 """ Loading and Adding game images to dictionary """
 Game_Imges["background"] = pygame.image.load("images/background.png") # Background
@@ -98,6 +99,21 @@ def pipes_velocity(p_list):
         pipes.centerx -= 4
     return p_list
 
+
+def check_collision(p_list):
+    global Bird_rect
+    for pipes in p_list:
+        if pipes.colliderect(Bird_rect):
+            return False
+    
+    if Bird_rect.top < -5:
+        return False
+    
+    if Bird_rect.bottom > 500:
+        return False
+    return True
+
+
 """ Rects """
 bird_select = Game_Imges["main_game_bird"][bird_index]
 Bird_rect = bird_select.get_rect(center = (80, 200))
@@ -135,19 +151,22 @@ while True:
 
     GameWindow.blit(Game_Imges["background"], (0, 0))
 
-    # Bird
-    bird_movement += gravity
-    Bird_rect.centery += bird_movement
-    bird_select, Bird_rect = bird_animation()
-    GameWindow.blit(bird_select, Bird_rect)
+    if game_on:
+        # Bird
+        bird_movement += gravity
+        Bird_rect.centery += bird_movement
+        bird_select, Bird_rect = bird_animation()
+        GameWindow.blit(bird_select, Bird_rect)
 
-    #Pipes
-    new_pipe_list = pipes_velocity(pipe_list)
-    blitting_pipes(new_pipe_list)
+        #Pipes
+        new_pipe_list = pipes_velocity(pipe_list)
+        blitting_pipes(new_pipe_list)
 
     # Base
     moving_base()
 
+    #collision
+    game_on = check_collision(new_pipe_list)
      
     
 
